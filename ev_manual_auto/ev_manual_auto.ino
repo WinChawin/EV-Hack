@@ -303,8 +303,8 @@ Slope imu_balancing() {
   float roll_rel  = haveBaseline ? (roll  - roll0) : roll;
   float pitch_rel = haveBaseline ? (pitch - pitch0) : pitch;
   // example slope flags (tune thresholds)
-  bool uphill   = (pitch_rel < -9.0f);
-  bool downhill = (pitch_rel > 9.0f);
+  bool uphill   = (pitch_rel < -5.0f);
+  bool downhill = (pitch_rel > 5.0f);
   // debug ~20Hz
   static uint32_t lastPrint=0;
   // if (millis() - lastPrint > 50){
@@ -539,41 +539,49 @@ void loop() {
             // Serial.println(uphill);
             // Serial.println(downhill);
 
+            // Servo control in AI mode (smaller angle than manual mode)
+            if (Ps3.data.button.square) {  // Turn left in AI mode
+              myservo.write(87);  // Turn left 20 degrees (less than manual's 60)
+            } else if (Ps3.data.button.circle) {  // Turn right in AI mode
+              myservo.write(123);  // Turn right 20 degrees (less than manual's 140)
+            } else {
+              myservo.write(105);  // Center position
+            }
+
             if (letgo){
-              if (lux < 80) {
-                Forward_R(60);
-                Forward_L(60);
+              if (lux < 1) {
+                Forward_R(80);
+                Forward_L(80);
                 display.setCursor(0, 0);
                 display.println("dark");
                 display.setCursor(0, 40);
-                display.println("60");
-              } else {
-                if (lux > 80) {
-                  Forward_R(80);
-                  Forward_L(80);
-                  display.setCursor(0, 0);
-                  display.println("light");
-                  display.setCursor(0, 40);
-                  display.println("80");
-                }
-                if (uphill) {
-                  Forward_R(100);
-                  Forward_L(100);
-                  display.setCursor(0, 20);
-                  display.println("up");
-                  display.setCursor(0, 40);
-                  display.println("100");
-                }
-                if (downhill) {
-                  Forward_R(60);
-                  Forward_L(60);
-                  display.setCursor(0, 20);
-                  display.println("down");
-                  display.setCursor(0, 40);
-                  display.println("60");
-                }
-                myservo.write(105);
+                display.println("80");
               }
+              if (lux > 0) {
+                Forward_R(100);
+                Forward_L(100);
+                display.setCursor(0, 0);
+                display.println("light");
+                display.setCursor(0, 40);
+                display.println("100");+  ๐ฟ(
+              }
+              if (uphill) {
+                Forward_R(120);
+                Forward_L(120);
+                display.setCursor(0, 20);
+                display.println("up");
+                display.setCursor(0, 40);
+                display.println("120");
+              }
+              if (downhill) {
+                Forward_R(80);
+                Forward_L(80);
+                display.setCursor(0, 20);
+                display.println("down");
+                display.setCursor(0, 40);
+                display.println("80");
+              }
+              
             } else {
                 Forward_R(0);
                 Forward_L(0);
