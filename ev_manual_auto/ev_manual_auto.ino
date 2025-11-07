@@ -18,7 +18,7 @@ int battery = 0;          // Variable of battery
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
 // Define channels for each motor
 const int motorLeft_A = 13;   // Motor pin for controlling
-const int motorLeft_B = 12;   // Motor pin for controlling
+const int motorLeft_B = 12;   // Motor pin for controlling 
 const int motorRight_A = 25;  // Motor pin for controlling
 const int motorRight_B = 26;  // Motor pin for controlling
 // Light sensor constant
@@ -303,8 +303,8 @@ Slope imu_balancing() {
   float roll_rel  = haveBaseline ? (roll  - roll0) : roll;
   float pitch_rel = haveBaseline ? (pitch - pitch0) : pitch;
   // example slope flags (tune thresholds)
-  bool uphill   = (pitch_rel < -11.0f);
-  bool downhill = (pitch_rel > 11.0f);
+  bool uphill   = (pitch_rel < -9.0f);
+  bool downhill = (pitch_rel > 9.0f);
   // debug ~20Hz
   static uint32_t lastPrint=0;
   // if (millis() - lastPrint > 50){
@@ -540,7 +540,7 @@ void loop() {
             // Serial.println(downhill);
 
             if (letgo){
-              if (lux < 100) {
+              if (lux < 80) {
                 Forward_R(60);
                 Forward_L(60);
                 display.setCursor(0, 0);
@@ -548,7 +548,7 @@ void loop() {
                 display.setCursor(0, 40);
                 display.println("60");
               } else {
-                if (lux > 100) {
+                if (lux > 80) {
                   Forward_R(80);
                   Forward_L(80);
                   display.setCursor(0, 0);
